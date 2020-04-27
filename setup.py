@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mailing',
-    version='0.1',
+    version='0.2',
     description='Send mail in CSE server',
     url='https://github.com/yttty/mailing',
     author='Tim Yang',

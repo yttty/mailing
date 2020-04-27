@@ -18,6 +18,7 @@ def send_mail(sender,
               send_to: List[str],
               subject,
               text,
+              send_bcc: List[str] = None,
               files=None,
               server=None):
     """
@@ -34,6 +35,11 @@ def send_mail(sender,
 
     msg.attach(MIMEText(text))
 
+    recipient = send_to
+    if send_bcc:
+        msg['Bcc'] = COMMASPACE.join(send_bcc)
+        recipient = [recipient] + send_bcc
+
     for f in files or []:
         with open(f, "rb") as fil:
             part = MIMEApplication(fil.read(), Name=basename(f))
@@ -43,7 +49,7 @@ def send_mail(sender,
 
     try:
         smtp = smtplib.SMTP(server)
-        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.sendmail(send_from, recipient, msg.as_string())
         smtp.close()
         logging.info(f'Sent mail from {send_from} to ' + ' and '.join(send_to))
         print(f'Sent mail from {send_from} to ' + ' and '.join(send_to))
@@ -55,12 +61,13 @@ def send_mail(sender,
 
 
 def send_mail_cse_smtp(cse_username: str, subject: str, content: str,
-                       attachment: List[str], receiver: List[str]):
+                       attachment: List[str], receiver: List[str], bcc: List[str] = None):
     send_mail(sender=cse_username,
               send_from=cse_username + '@cse.cuhk.edu.hk',
               send_to=receiver,
               subject=subject,
               text=content,
+              send_bcc = bcc,
               files=attachment,
               server='mail.cse.cuhk.edu.hk')
 
