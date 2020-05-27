@@ -27,4 +27,14 @@ send_mail_cse_smtp(
     None,  # no attachment
     ['tim.tyyang@outlook.com']  # receiver list
 )
+
+send_mail_cse_smtp(
+    'tyyang',  # cse username
+    "TEST",  # subject
+    "THIS is a test mail",  # content
+    ['mailing.py'],  # attachment
+    ['tim.tyyang@outlook.com'],  # receiver list
+    ['tyyaa@qq.com'],  # cc list
+    ['tyyang@link.cuhk.edu.hk']  # bcc list
+)
 ```

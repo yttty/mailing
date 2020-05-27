@@ -18,6 +18,7 @@ def send_mail(sender,
               send_to: List[str],
               subject,
               text,
+              send_cc: List[str] = None,
               send_bcc: List[str] = None,
               files=None,
               server=None):
@@ -36,9 +37,16 @@ def send_mail(sender,
     msg.attach(MIMEText(text))
 
     recipient = send_to
-    if send_bcc:
+    if send_cc and send_bcc:
+        msg['Cc'] = COMMASPACE.join(send_cc)
+        msg['Bcc'] = COMMASPACE.join(send_bcc)
+        recipient = [recipient] + send_cc + send_bcc
+    elif send_bcc:
         msg['Bcc'] = COMMASPACE.join(send_bcc)
         recipient = [recipient] + send_bcc
+    elif send_cc:
+        msg['Cc'] = COMMASPACE.join(send_cc)
+        recipient = [recipient] + send_cc
 
     for f in files or []:
         with open(f, "rb") as fil:
@@ -60,14 +68,20 @@ def send_mail(sender,
         logging.error(err_msg)
 
 
-def send_mail_cse_smtp(cse_username: str, subject: str, content: str,
-                       attachment: List[str], receiver: List[str], bcc: List[str] = None):
+def send_mail_cse_smtp(cse_username: str,
+                       subject: str,
+                       content: str,
+                       attachment: List[str],
+                       receiver: List[str],
+                       cc: List[str] = None,
+                       bcc: List[str] = None):
     send_mail(sender=cse_username,
               send_from=cse_username + '@cse.cuhk.edu.hk',
               send_to=receiver,
               subject=subject,
               text=content,
-              send_bcc = bcc,
+              send_cc=cc,
+              send_bcc=bcc,
               files=attachment,
               server='mail.cse.cuhk.edu.hk')
 
@@ -80,6 +94,9 @@ if __name__ == "__main__":
         'tyyang',  # cse username
         "TEST",  # subject
         "THIS is a test mail",  # content
-        ['./README.md'],  # attachment
-        ['tim.tyyang@outlook.com']  # receiver list
+        ['mailing.py'],  # attachment
+        ['tim.tyyang@outlook.com'],  # receiver list
+        ['tyyaa@qq.com'],  # cc list
+        ['tyyang@link.cuhk.edu.hk']  # bcc list
+        # None  # bcc list
     )
